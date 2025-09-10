@@ -1,42 +1,65 @@
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { siteConfig } from './lib/site-config'
 
-import bundleAnalyzer from '@next/bundle-analyzer'
+export default siteConfig({
+  // the site's root Notion page (required)
+  rootNotionPageId: '80604cad125a4b52a34cc2df7bab6683',
 
-const withBundleAnalyzer = bundleAnalyzer({
-  // eslint-disable-next-line no-process-env
-  enabled: process.env.ANALYZE === 'true'
-})
+  // if you want to restrict pages to a single notion workspace (optional)
+  // (this should be a Notion ID; see the docs for how to extract this)
+  rootNotionSpaceId: null,
 
-export default withBundleAnalyzer({
-  staticPageGenerationTimeout: 300,
-  images: {
-    remotePatterns: [
-      { protocol: 'https', hostname: 'www.notion.so' },
-      { protocol: 'https', hostname: 'notion.so' },
-      { protocol: 'https', hostname: 'images.unsplash.com' },
-      { protocol: 'https', hostname: 'abs.twimg.com' },
-      { protocol: 'https', hostname: 'pbs.twimg.com' },
-      { protocol: 'https', hostname: 's3.us-west-2.amazonaws.com' }
-    ],
-    formats: ['image/avif', 'image/webp'],
-    dangerouslyAllowSVG: true,
-    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;"
-  },
+  // basic site info (required)
+  name: '李羽桐',
+  domain: 'yutong.li',
+  author: 'naaran',
 
-  webpack: (config) => {
-    // Workaround for ensuring that `react` and `react-dom` resolve correctly
-    // when using a locally-linked version of `react-notion-x`.
-    // @see https://github.com/vercel/next.js/issues/50391
-    const dirname = path.dirname(fileURLToPath(import.meta.url))
-    config.resolve.alias.react = path.resolve(dirname, 'node_modules/react')
-    config.resolve.alias['react-dom'] = path.resolve(
-      dirname,
-      'node_modules/react-dom'
-    )
-    return config
-  },
+  // open graph metadata (optional)
+  description: '李羽桐的个人网站',
 
-  // See https://react-tweet.vercel.app/next#troubleshooting
-  transpilePackages: ['react-tweet']
+  // social usernames (optional)
+  //  twitter: 'transitive_bs',
+  //  github: 'transitive-bullshit',
+  //  linkedin: 'fisch2',
+  // mastodon: '#', // optional mastodon profile URL, provides link verification
+  // newsletter: '#', // optional newsletter URL
+  // youtube: '#', // optional youtube channel name or `channel/UCGbXXXXXXXXXXXXXXXXXXXXXX`
+
+  // default notion icon and cover images for site-wide consistency (optional)
+  // page-specific values will override these site-wide defaults
+  defaultPageIcon: null,
+  defaultPageCover: null,
+  defaultPageCoverPosition: 0.5,
+
+  // whether or not to enable support for LQIP preview images (optional)
+  isPreviewImageSupportEnabled: true,
+
+  // whether or not redis is enabled for caching generated preview images (optional)
+  // NOTE: if you enable redis, you need to set the `REDIS_HOST` and `REDIS_PASSWORD`
+  // environment variables. see the readme for more info
+  isRedisEnabled: false,
+
+  // map of notion page IDs to URL paths (optional)
+  // any pages defined here will override their default URL paths
+  // example:
+  //
+  // pageUrlOverrides: {
+  //   '/foo': '067dd719a912471ea9a3ac10710e7fdf',
+  //   '/bar': '0be6efce9daf42688f65c76b89f8eb27'
+  // }
+  pageUrlOverrides: null,
+
+  // whether to use the default notion navigation style or a custom one with links to
+  // important pages. To use `navigationLinks`, set `navigationStyle` to `custom`.
+  navigationStyle: 'default'
+  // navigationStyle: 'custom',
+  // navigationLinks: [
+  //   {
+  //     title: 'About',
+  //     pageId: 'f1199d37579b41cbabfc0b5174f4256a'
+  //   },
+  //   {
+  //     title: 'Contact',
+  //     pageId: '6a29ebcb935a4f0689fe661ab5f3b8d1'
+  //   }
+  // ]
 })
